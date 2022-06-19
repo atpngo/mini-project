@@ -9,7 +9,8 @@ function Map()
     const [lines, setLines] = useState([]);
     const [pageCount, setPageCount] = useState(0);
     
-
+    const [, updateState] = React.useState();
+    const forceUpdate = React.useCallback(() => updateState({}), []);
 
     useEffect(() => {
         setLines([]);
@@ -71,6 +72,9 @@ function Map()
     {
         console.log(lines);
     }
+
+
+    
 
     const redOptions = { color : 'purple' };
     const greenOptions = { color : 'green' };
