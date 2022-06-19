@@ -56,6 +56,27 @@ function App() {
         alert("Bad Input Range");
       }
   }
+
+  const sendPowerline = (e) => {
+    e.preventDefault();
+    let geo = document.getElementById("pl-geo").value.replace(/'/g, '"');
+    let wear = document.getElementById("pl-wear").value;
+    let weather = document.getElementById("pl-weather").value;
+    let vegetation = document.getElementById("pl-veg").value;
+    let name = document.getElementById("pl-name").value;
+
+    let data = new FormData();
+    data.append("geometry", geo);
+    data.append("wear", wear);
+    data.append("weather", weather);
+    data.append("vegetation", vegetation);
+    data.append("name", name);
+
+    axios.post("http://localhost:8000/add-powerline/", data)
+      .then(res => console.log(res))
+      .catch(err => console.log(err))
+      .then(console.log("DONE SENDING POWERLINE DATA"));
+  }
   return (
     <div className="App">
       <button onClick={sendData}>CREATE REQUEST</button>
@@ -64,6 +85,19 @@ function App() {
       <p>Current threshold: {threshold}</p>
       <input id="threshold"></input>
       <button onClick={updateThreshold}>UPDATE REQUEST</button>
+      <br/>
+      <br/>
+      <p>Add Powerine</p>
+      <br/>
+      <p>Geometry <input id="pl-geo"></input></p>
+      <p>Wear <input id="pl-wear"></input></p>
+      <p>Weather <input id="pl-weather"></input></p>
+      <p>Vegetation <input id="pl-veg"></input></p>
+      <p>Name <input id="pl-name"></input></p>
+      <button onClick={sendPowerline}>ADD POWERLINE</button>
+
+
+
     </div>
   );
 }
