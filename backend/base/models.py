@@ -17,7 +17,7 @@ class Threshold(models.Model):
 
 
 class Powerline(models.Model):
-    geometry = models.TextField(null=True)
+    geometry = models.JSONField(null=True)
     wear = models.FloatField()
     weather = models.FloatField()
     vegetation = models.FloatField()
