@@ -1,6 +1,8 @@
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Polyline, Rectangle } from 'react-leaflet';
 import '../styles/Map.css';
+import Powerline from "./Powerline";
 
 function Map()
 {   
@@ -398,8 +400,42 @@ function Map()
    [[38.57828652892934, -121.75817975164266],
     [38.57928834187509, -121.75814212999649],
     [38.579343730622064, -121.76265508623443]]]
-    
-    const redOptions = { color : 'red' };
+
+    const [lines, setLines] = useState([]);
+
+    useEffect(() => {
+        axios.get('http://localhost:8000/powerlines/')
+            .then((res) => {
+                let data = res.data.results[0];
+                console.log(data);
+                let lineObject = {};
+                lineObject['wear'] = data.wear;
+                lineObject['weather'] = data.weather;
+                lineObject['vegetation'] = data.vegetation;
+                lineObject['name'] = data.name;
+                let newCoords = [];
+                for (let i=0; i<data.geometry.coordinates.length; i++)
+                {
+                    let tmp = [];
+                    for (let j=0; j<data.geometry.coordinates[i].length; j++)
+                    {
+                        tmp.push((data.geometry.coordinates[i][j]).reverse());
+                    }
+                    newCoords.push(tmp);
+                }
+                lineObject['coordinates'] = newCoords;
+                setLines([...lines, lineObject]);
+                // console.log(lineObject);
+            })
+            .catch(err => console.log(err));
+    }, []);
+
+    const doThis = (e) =>
+    {
+        console.log(lines);
+    }
+
+    const redOptions = { color : 'purple' };
     const greenOptions = { color : 'green' };
     const rectangle = [
         [38.546501023184646, -121.76321817174035],
@@ -417,10 +453,14 @@ function Map()
                     A pretty CSS3 popup. <br /> Easily customizable.
                     </Popup>
                 </Marker> */}
-                
-                <Polyline pathOptions={redOptions} positions={polyline}/>
-                <Rectangle bounds={rectangle} pathOptions={greenOptions}/>
+                {lines.map(powerline => {
+                    return <Powerline name={powerline.name} wear={powerline.wear} weather={powerline.weather} vegetation={powerline.vegetation} coordinates={powerline.coordinates} threshold={0.5}></Powerline>
+                })}
+                {/* <Polyline pathOptions={redOptions} positions={polyline}><Popup>Lillian Brown Line</Popup></Polyline> */}
+                {/* <Rectangle bounds={rectangle} pathOptions={greenOptions}/> */}
             </MapContainer>
+            put input here later
+            <button onClick={doThis}>click me</button>
         </div>
     ); 
 }
