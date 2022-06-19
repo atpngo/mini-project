@@ -2,9 +2,8 @@ from django.http import JsonResponse
 from itsdangerous import Serializer
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from base.models import Item, Threshold
-from .serializers import ItemSerializer, ThresholdSerializer
-from rest_framework.parsers import JSONParser 
+from base.models import Item, Threshold, Powerline
+from .serializers import ItemSerializer, ThresholdSerializer, PowerlineSerializer
 
 @api_view(['GET'])
 def getData(request):
@@ -30,4 +29,11 @@ def editThreshold(request):
         serializer = ThresholdSerializer(items, data=request.data)
         if serializer.is_valid():
             serializer.save()
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def getPowerlines(request):
+    items = Powerline.objects.all()
+    serializer = PowerlineSerializer(items, many=True)
     return Response(serializer.data)
