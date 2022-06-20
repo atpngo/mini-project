@@ -7,74 +7,69 @@ import Powerline from "./Powerline";
 function Map()
 {   
     const [lines, setLines] = useState([]);
-    const [pageCount, setPageCount] = useState(0);
+    const [loading, setLoading] = useState(false);
     
-    const [, updateState] = React.useState();
-    const forceUpdate = React.useCallback(() => updateState({}), []);
-
+    
     useEffect(() => {
         setLines([]);
-        // Figure out the number of pages you have
+        setLoading(true);
         axios.get('http://localhost:8000/powerlines/')
             .then((res) => {
                 let data = res.data.results.length;
                 let totalDataCount = res.data.count;
-                setPageCount(Math.ceil(totalDataCount/data));
-            });
-        // For each page, plot all graphs
-        let pages= Array(pageCount).join(".").split(".");
-        pages = pages.map((element, index) => {
-            return '?page=' + parseInt(index+1);
-        });
-
-
-        let promises = [];
-        let powerlineObjects = [];
-        for (let currentPage=0; currentPage<pageCount; currentPage++)
-        {
-            
-            axios.get('http://localhost:8000/powerlines/' + pages[currentPage])
-            .then((res) => {
-                let lineData = res.data.results;
-                let numLines = lineData.length;
-                // console.log(lineData);
-                
-                for (let lineNumber=0; lineNumber<numLines; lineNumber++)
-                {
-                    let data = res.data.results[lineNumber];
-                    // console.log(data)
-                    let lineObject = {};
-                    lineObject['wear'] = data.wear;
-                    lineObject['weather'] = data.weather;
-                    lineObject['vegetation'] = data.vegetation;
-                    lineObject['name'] = data.name;
-                    let newCoords = [];
-                    // flip latlng to lnglat
-                    for (let i=0; i<data.geometry.coordinates.length; i++)
+                let pages= Array(Math.ceil(totalDataCount/data)).join(".").split(".");
+                pages = pages.map((element, index) => {
+                    return 'http://localhost:8000/powerlines/?page=' + parseInt(index+1);
+                });
+                axios.all(
+                    pages.map((page) => axios.get(page))
+                )
+                .then( response => {
+                    // setLines(response);
+                    let responseLength = response.length;
+                    for (let i=0; i<responseLength; i++)
                     {
-                        let tmp = [];
-                        for (let j=0; j<data.geometry.coordinates[i].length; j++)
+                        let pageData = response[i].data.results;
+                        for (let j=0; j<pageData.length; j++)
                         {
-                            tmp.push((data.geometry.coordinates[i][j]).reverse());
+                            let lineData = pageData[j];
+                            let lineObject = {};
+                            lineObject['wear'] = lineData.wear;
+                            lineObject['weather'] = lineData.weather;
+                            lineObject['vegetation'] = lineData.vegetation;
+                            lineObject['name'] = lineData.name;
+                            let newCoords = [];
+                            // flip latlng to lnglat
+                            for (let i=0; i<lineData.geometry.coordinates.length; i++)
+                            {
+                                let tmp = [];
+                                for (let j=0; j<lineData.geometry.coordinates[i].length; j++)
+                                {
+                                    tmp.push((lineData.geometry.coordinates[i][j]).reverse());
+                                }
+                                newCoords.push(tmp);
+                            }
+                            lineObject['coordinates'] = newCoords;
+                            // console.log(lineObject);
+                            setLines(prevState => [...prevState, lineObject]);
                         }
-                        newCoords.push(tmp);
                     }
-                    lineObject['coordinates'] = newCoords;
-                    // powerlineObjects.push(lineObject);
-                    setLines(prevState => [...prevState, lineObject]);
+                    setLoading(false);
                 }
-            })
-        }
+                )
+
+            });
+
     }, []);
 
 
-    const doThis = (e) =>
+    
+
+
+    const doThat = () =>
     {
         console.log(lines);
     }
-
-
-    
 
     const redOptions = { color : 'purple' };
     const greenOptions = { color : 'green' };
@@ -82,6 +77,13 @@ function Map()
         [38.546501023184646, -121.76321817174035],
         [38.58325086112612, -121.73167409436275]
     ]
+
+    if (loading)
+    {
+        return <p>Loading...</p>
+    }
+
+
     return (
         <div>
             <MapContainer center={[35.606914, -118.249178]} zoom={7} scrollWheelZoom={true}>
@@ -94,14 +96,15 @@ function Map()
                     A pretty CSS3 popup. <br /> Easily customizable.
                     </Popup>
                 </Marker> */}
-                {lines.map(powerline => {
-                    return <Powerline name={powerline.name} wear={powerline.wear} weather={powerline.weather} vegetation={powerline.vegetation} coordinates={powerline.coordinates} threshold={0.5}></Powerline>
+                {lines.map((powerline, index) => {
+                    return <Powerline key={index} name={powerline.name} wear={powerline.wear} weather={powerline.weather} vegetation={powerline.vegetation} coordinates={powerline.coordinates} threshold={0.5}></Powerline>
                 })}
                 {/* <Polyline pathOptions={redOptions} positions={polyline}><Popup>Lillian Brown Line</Popup></Polyline> */}
                 {/* <Rectangle bounds={rectangle} pathOptions={greenOptions}/> */}
             </MapContainer>
             put input here later
-            <button onClick={doThis}>click me</button>
+            <button onClick={doThat}>print line data</button>
+            <br/>
         </div>
     ); 
 }
