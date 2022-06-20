@@ -3,12 +3,13 @@ import React, { useEffect, useLayoutEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Polyline, Rectangle } from 'react-leaflet';
 import '../styles/Map.css';
 import Powerline from "./Powerline";
+import ThresholdInput from "./ThresholdInput";
 
 function Map()
 {   
     const [lines, setLines] = useState([]);
     const [loading, setLoading] = useState(false);
-    
+    const [threshold, setThreshold] = useState(0.5);
     
     useEffect(() => {
         setLines([]);
@@ -54,6 +55,13 @@ function Map()
                             setLines(prevState => [...prevState, lineObject]);
                         }
                     }
+                    // get threshold info
+                    axios.get("http://localhost:8000/edit-threshold/")
+                        .then(res => 
+                            {
+                                setThreshold(res.data[0].value)
+                            });
+
                     setLoading(false);
                 }
                 )
@@ -91,19 +99,15 @@ function Map()
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                {/* <Marker position={[35.606914, -118.249178]}>
-                    <Popup>
-                    A pretty CSS3 popup. <br /> Easily customizable.
-                    </Popup>
-                </Marker> */}
+
                 {lines.map((powerline, index) => {
-                    return <Powerline key={index} name={powerline.name} wear={powerline.wear} weather={powerline.weather} vegetation={powerline.vegetation} coordinates={powerline.coordinates} threshold={0.5}></Powerline>
+                    return <Powerline key={index} name={powerline.name} wear={powerline.wear} weather={powerline.weather} vegetation={powerline.vegetation} coordinates={powerline.coordinates} threshold={threshold}></Powerline>
                 })}
-                {/* <Polyline pathOptions={redOptions} positions={polyline}><Popup>Lillian Brown Line</Popup></Polyline> */}
-                {/* <Rectangle bounds={rectangle} pathOptions={greenOptions}/> */}
+
             </MapContainer>
             put input here later
             <button onClick={doThat}>print line data</button>
+            <ThresholdInput></ThresholdInput>
             <br/>
         </div>
     ); 
