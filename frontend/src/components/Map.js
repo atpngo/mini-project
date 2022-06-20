@@ -8,73 +8,190 @@ function Map()
 {   
     const [lines, setLines] = useState([]);
     const [pageCount, setPageCount] = useState(0);
+    const [loading, setLoading] = useState(false);
     
     const [, updateState] = React.useState();
     const forceUpdate = React.useCallback(() => updateState({}), []);
 
-    useEffect(() => {
-        setLines([]);
-        // Figure out the number of pages you have
+
+    const doThis = async(e) =>
+    {
         axios.get('http://localhost:8000/powerlines/')
+        .then((res) => {
+            let data = res.data.results.length;
+            let totalDataCount = res.data.count;
+            setPageCount(Math.ceil(totalDataCount/data));
+        });
+        // For each page, plot all graphs
+        let pages= Array(pageCount).join(".").split(".");
+            pages = pages.map((element, index) => {
+                return 'http://localhost:8000/powerlines/?page=' + parseInt(index+1);
+            });
+
+            const fetchData = async (pages) => {
+                let data = [];
+                for (let i=0; i<pages.length; i++)
+                {
+                    const res = await axios.get(pages[i]);
+                    data.push(res);
+                }
+                
+                setLines(data);
+            }
+            
+
+            fetchData(pages).catch(console.error);
+    }
+
+    const fetchPowerlineData = async() => 
+    {
+        
+        try
+        {
+            // Figure out the number of pages you have
+            axios.get('http://localhost:8000/powerlines/')
             .then((res) => {
                 let data = res.data.results.length;
                 let totalDataCount = res.data.count;
                 setPageCount(Math.ceil(totalDataCount/data));
             });
-        // For each page, plot all graphs
-        let pages= Array(pageCount).join(".").split(".");
-        pages = pages.map((element, index) => {
-            return '?page=' + parseInt(index+1);
-        });
+            // For each page, plot all graphs
+            console.log(pageCount);
 
-
-        let promises = [];
-        let powerlineObjects = [];
-        for (let currentPage=0; currentPage<pageCount; currentPage++)
-        {
+            let pages= Array(pageCount).join(".").split(".");
+            pages = pages.map((element, index) => {
+                return 'http://localhost:8000/powerlines/?page=' + parseInt(index+1);
+            });
+            axios.all(pages.map((page) => axios.get(page))).then(
+                (data) => console.log(data)
+            );
             
-            axios.get('http://localhost:8000/powerlines/' + pages[currentPage])
-            .then((res) => {
-                let lineData = res.data.results;
-                let numLines = lineData.length;
-                // console.log(lineData);
-                
-                for (let lineNumber=0; lineNumber<numLines; lineNumber++)
-                {
-                    let data = res.data.results[lineNumber];
-                    // console.log(data)
-                    let lineObject = {};
-                    lineObject['wear'] = data.wear;
-                    lineObject['weather'] = data.weather;
-                    lineObject['vegetation'] = data.vegetation;
-                    lineObject['name'] = data.name;
-                    let newCoords = [];
-                    // flip latlng to lnglat
-                    for (let i=0; i<data.geometry.coordinates.length; i++)
-                    {
-                        let tmp = [];
-                        for (let j=0; j<data.geometry.coordinates[i].length; j++)
-                        {
-                            tmp.push((data.geometry.coordinates[i][j]).reverse());
-                        }
-                        newCoords.push(tmp);
-                    }
-                    lineObject['coordinates'] = newCoords;
-                    // powerlineObjects.push(lineObject);
-                    setLines(prevState => [...prevState, lineObject]);
-                }
-            })
         }
+        catch (error)
+        {
+            console.log(error);
+        }
+        finally
+        {
+            setLoading(false);
+        }
+    }
+    useEffect(() => {
+        setLines([]);
+        axios.get('http://localhost:8000/powerlines/')
+            .then((res) => {
+                let data = res.data.results.length;
+                let totalDataCount = res.data.count;
+                setPageCount(Math.ceil(totalDataCount/data));
+                let pages= Array(Math.ceil(totalDataCount/data)).join(".").split(".");
+                pages = pages.map((element, index) => {
+                    return 'http://localhost:8000/powerlines/?page=' + parseInt(index+1);
+                });
+                axios.all(
+                    pages.map((page) => axios.get(page))
+                )
+                .then( response => {
+                    setLines(response);
+                }
+                )
+
+            });
+
+            
+            
+        
+        // setLoading(true);
+        // // // fetchPowerlineData();
+        // // Figure out the number of pages you have
+        // axios.get('http://localhost:8000/powerlines/')
+        // .then((res) => {
+        //     let data = res.data.results.length;
+        //     let totalDataCount = res.data.count;
+        //     setPageCount(Math.ceil(totalDataCount/data));
+        // });
+        // // For each page, plot all graphs
+        // let pages= Array(pageCount).join(".").split(".");
+        //     pages = pages.map((element, index) => {
+        //         return 'http://localhost:8000/powerlines/?page=' + parseInt(index+1);
+        //     });
+
+            
+        //     axios.all(pages.map((page) => axios.get(page)))
+        //     .then((res) => console.log(res))
+        //     .then((res) => {setLines(res); setLoading(false); });
+
+        
+            // axios.get('http://localhost:8000/powerlines/')
+            // .then((res) => {
+            //     setLines(prevState => [...prevState, res.data]);
+            // });
+            // axios.get('http://localhost:8000/powerlines/?page=2')
+            // .then((res) => {
+            //     setLines(prevState => [...prevState, res.data]);
+            // });
+
+            // axios.all(pages.map((page) => axios.get(page))).then(
+            //     (data) => {
+            //         setLines(data);
+            //     }
+            // );
+
+
+
+
+        // let pages= Array(pageCount).join(".").split(".");
+        // pages = pages.map((element, index) => {
+        //     return 'http://localhost:8000/powerlines/?page=' + parseInt(index+1);
+        // });
+        // axios.all(pages.map((page) => axios.get(page))).then(
+        //     console.log(data)
+        // );
+
+        // for (let currentPage=0; currentPage<pageCount; currentPage++)
+        // {
+            
+        //     axios.get('http://localhost:8000/powerlines/' + pages[currentPage])
+        //     .then((res) => {
+        //         let lineData = res.data.results;
+        //         let numLines = lineData.length;
+        //         // console.log(lineData);
+                
+        //         for (let lineNumber=0; lineNumber<numLines; lineNumber++)
+        //         {
+        //             let data = res.data.results[lineNumber];
+        //             // console.log(data)
+        //             let lineObject = {};
+        //             lineObject['wear'] = data.wear;
+        //             lineObject['weather'] = data.weather;
+        //             lineObject['vegetation'] = data.vegetation;
+        //             lineObject['name'] = data.name;
+        //             let newCoords = [];
+        //             // flip latlng to lnglat
+        //             for (let i=0; i<data.geometry.coordinates.length; i++)
+        //             {
+        //                 let tmp = [];
+        //                 for (let j=0; j<data.geometry.coordinates[i].length; j++)
+        //                 {
+        //                     tmp.push((data.geometry.coordinates[i][j]).reverse());
+        //                 }
+        //                 newCoords.push(tmp);
+        //             }
+        //             lineObject['coordinates'] = newCoords;
+        //             // powerlineObjects.push(lineObject);
+        //             setLines(prevState => [...prevState, lineObject]);
+        //         }
+        //     })
+        // }
     }, []);
 
 
-    const doThis = (e) =>
+    
+
+
+    const doThat = () =>
     {
         console.log(lines);
     }
-
-
-    
 
     const redOptions = { color : 'purple' };
     const greenOptions = { color : 'green' };
@@ -82,6 +199,13 @@ function Map()
         [38.546501023184646, -121.76321817174035],
         [38.58325086112612, -121.73167409436275]
     ]
+
+    if (loading)
+    {
+        return <p>Loading...</p>
+    }
+
+
     return (
         <div>
             <MapContainer center={[35.606914, -118.249178]} zoom={7} scrollWheelZoom={true}>
@@ -94,14 +218,16 @@ function Map()
                     A pretty CSS3 popup. <br /> Easily customizable.
                     </Popup>
                 </Marker> */}
-                {lines.map(powerline => {
+                {/* {lines.map(powerline => {
                     return <Powerline name={powerline.name} wear={powerline.wear} weather={powerline.weather} vegetation={powerline.vegetation} coordinates={powerline.coordinates} threshold={0.5}></Powerline>
-                })}
+                })} */}
                 {/* <Polyline pathOptions={redOptions} positions={polyline}><Popup>Lillian Brown Line</Popup></Polyline> */}
                 {/* <Rectangle bounds={rectangle} pathOptions={greenOptions}/> */}
             </MapContainer>
             put input here later
-            <button onClick={doThis}>click me</button>
+            <button id="WORK" onClick={doThis}>click me</button>
+            <button onClick={doThat}>other</button>
+            <br/>
         </div>
     ); 
 }
