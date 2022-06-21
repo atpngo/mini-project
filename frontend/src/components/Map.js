@@ -8,7 +8,7 @@ import ThresholdInput from "./ThresholdInput";
 function Map()
 {   
     const [lines, setLines] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [threshold, setThreshold] = useState(0.5);
     
     useEffect(() => {

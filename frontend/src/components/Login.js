@@ -15,7 +15,7 @@ const theme = createTheme();
 
 function Login() 
 {
-    let {loginUser} = useContext(AuthContext);
+    let {user, loginUser} = useContext(AuthContext);
 
     const navigate = useNavigate();
     const signUp = () =>
@@ -23,7 +23,7 @@ function Login()
         navigate('/register');
     }    
 
-    return (
+    return user ? <div>Logged in</div> : (
         <ThemeProvider theme={theme}>
         <Container component="main" maxWidth="xs">
             <CssBaseline />

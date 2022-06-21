@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { createContext, useState, useEffect } from "react";
 import jwt_decode from "jwt-decode";
 import { useNavigate } from 'react-router-dom';
+import { optionGroupUnstyledClasses } from "@mui/base";
 
 const AuthContext = createContext();
 
@@ -13,6 +14,8 @@ export const AuthProvider = ({children}) =>
      
     let [authTokens, setAuthTokens] = useState(() => localStorage.getItem('authTokens') ? JSON.parse(localStorage.getItem('authTokens')) : null);
     let [user, setUser] = useState(() => localStorage.getItem('authTokens') ? jwt_decode(localStorage.getItem('authTokens')) : null);
+    let [loading, setLoading] = useState(true);
+    
     const navigate = useNavigate();
 
     let loginUser = async (e) =>
@@ -30,11 +33,7 @@ export const AuthProvider = ({children}) =>
                         setAuthTokens(res.data);
                         setUser(jwt_decode(res.data.access));
                         localStorage.setItem('authTokens', JSON.stringify(res.data));
-                        // navigate('/map');
-                    }
-                    else
-                    {
-                        alert("Something went wrong!");
+                        navigate('/map');
                     }
                 })
             .catch(err =>
@@ -52,11 +51,47 @@ export const AuthProvider = ({children}) =>
         navigate('/');
     }
 
+    let updateToken = async () =>
+    {
+        console.log("update token call");
+        let payload = new FormData();
+        payload.append("refresh", authTokens.refresh)
+        axios.post('http://localhost:8000/api/token/refresh/', payload)
+            .then(res => 
+                {
+                    if (res.status === 200)
+                    {
+                        setAuthTokens(res.data);
+                        setUser(jwt_decode(res.data.access));
+                        localStorage.setItem('authTokens', JSON.stringify(res.data));
+                    }
+                })
+            .catch(err =>
+                {
+                    logoutUser();
+                })
+            
+    }
+
     let contextData = {
         user:user,
         loginUser:loginUser,
         logoutUser:logoutUser
     }
+
+    useEffect(() =>
+    {
+        let fourMinutes = 1000*60*4;
+        let interval = setInterval(() => 
+        {
+            if (authTokens)
+            {
+                updateToken();
+            }
+        }, fourMinutes)
+        return () => clearInterval(interval);
+
+    }, [authTokens, loading]);
 
     return(
         <AuthContext.Provider value={contextData}>
