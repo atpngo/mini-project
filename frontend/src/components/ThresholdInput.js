@@ -44,7 +44,8 @@ function ThresholdInput()
             data.append("value", tmpThreshold);
             axios.put("http://localhost:8000/edit-threshold/", data)
                 .then(setThresholdValue(tmpThreshold));
-
+            
+            // reload page
             document.location.reload();
                 
         }
@@ -57,6 +58,8 @@ function ThresholdInput()
 
     return (
         <div>
+            Threshold Value: {thresholdValue}
+            <br/>
             <Button variant="outlined" onClick={handleClickOpen}>
                 EDIT THRESHOLD 
             </Button>
@@ -73,7 +76,7 @@ function ThresholdInput()
                     <Button onClick={changeThresholdValue}>Confirm</Button>
                 </DialogActions>
             </Dialog>
-            Threshold Value: {thresholdValue}
+            
         </div>
     );
 }

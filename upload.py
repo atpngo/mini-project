@@ -6,7 +6,7 @@ import pandas
 data = pandas.read_csv('challenge_source_data.csv')
 data_len = len(data)
 # temp
-data_len = 10
+# data_len = 50
 
 def send_data(payload, i, data_len):
     r = requests.post('http://localhost:8000/add-powerline/', data=json.dumps(payload), headers={'content-type':'application/json'})

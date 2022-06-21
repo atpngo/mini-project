@@ -4,7 +4,7 @@ import pprint
 data = pandas.read_csv('challenge_source_data.csv')
 data_len = len(data)
 
-line = eval(data.loc[0, 'geometry'])
+line = eval(data.loc[44, 'geometry'])
 coords = line['coordinates']
 # pprint.pprint(coords)
 

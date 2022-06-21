@@ -40,13 +40,23 @@ function Map()
                             lineObject['vegetation'] = lineData.vegetation;
                             lineObject['name'] = lineData.name;
                             let newCoords = [];
+                            
                             // flip latlng to lnglat
                             for (let i=0; i<lineData.geometry.coordinates.length; i++)
                             {
                                 let tmp = [];
-                                for (let j=0; j<lineData.geometry.coordinates[i].length; j++)
+                                // in the rare event that we just have a normal 2D array 
+                                if (typeof(lineData.geometry.coordinates[i][0]) !== "object")
                                 {
-                                    tmp.push((lineData.geometry.coordinates[i][j]).reverse());
+                                    tmp.push((lineData.geometry.coordinates[i]).reverse());
+                                }
+                                // most arrays we get are 3D
+                                else
+                                {
+                                    for (let j=0; j<lineData.geometry.coordinates[i].length; j++)
+                                    {
+                                        tmp.push((lineData.geometry.coordinates[i][j]).reverse());
+                                    }
                                 }
                                 newCoords.push(tmp);
                             }
@@ -71,21 +81,6 @@ function Map()
     }, []);
 
 
-    
-
-
-    const doThat = () =>
-    {
-        console.log(lines);
-    }
-
-    const redOptions = { color : 'purple' };
-    const greenOptions = { color : 'green' };
-    const rectangle = [
-        [38.546501023184646, -121.76321817174035],
-        [38.58325086112612, -121.73167409436275]
-    ]
-
     if (loading)
     {
         return <p>Loading...</p>
@@ -94,7 +89,7 @@ function Map()
 
     return (
         <div>
-            <MapContainer center={[35.606914, -118.249178]} zoom={7} scrollWheelZoom={true}>
+            <MapContainer center={[38.475879, -121.772135]} zoom={11} scrollWheelZoom={true}>
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -105,8 +100,6 @@ function Map()
                 })}
 
             </MapContainer>
-            put input here later
-            <button onClick={doThat}>print line data</button>
             <ThresholdInput></ThresholdInput>
             <br/>
         </div>

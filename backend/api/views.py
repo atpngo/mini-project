@@ -39,7 +39,6 @@ def getPowerlines(request):
     items = Powerline.objects.all()
     result = paginator.paginate_queryset(items, request)
     serializer = PowerlineSerializer(result, many=True)
-    print(paginator.page.count)
     return paginator.get_paginated_response(serializer.data)
 
 @api_view(['POST'])
