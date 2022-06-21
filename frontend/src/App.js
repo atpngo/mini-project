@@ -3,6 +3,9 @@ import Map from './components/Map';
 import Login from './components/Login';
 import Register from './components/Register';
 import Error from './components/Error';
+import NavBar from './components/NavBar';
+import PrivateRoute from './utils/PrivateRoute';
+import { AuthProvider } from './context/AuthContext';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 function App() {
@@ -10,12 +13,17 @@ function App() {
   return (
     <div className="App">
       <Router>
-        <Routes>
-          <Route path="/" element={<Login/>}/>
-          <Route path="/register" element={<Register/>}/>
-          <Route path="/map" element={<Map/>}/>
-          <Route path="*" element={<Error/>}/>
-        </Routes>
+        <AuthProvider>
+          <NavBar/>
+          <Routes>
+              <Route path="/" element={<Login/>}/>
+              <Route path="/register" element={<Register/>}/>
+              <Route path="/map" element={<PrivateRoute/>}>
+                  <Route path="/map" element={<Map/>}/>
+              </Route>
+            <Route path="*" element={<Error/>}/>
+          </Routes>
+        </AuthProvider>
       </Router>
     </div>
   );

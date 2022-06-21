@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
@@ -9,26 +9,19 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from "react-router-dom";
+import AuthContext from '../context/AuthContext';
 
 const theme = createTheme();
 
 function Login() 
 {
+    let {loginUser} = useContext(AuthContext);
 
     const navigate = useNavigate();
     const signUp = () =>
     {
         navigate('/register');
-    }
-    
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        console.log({
-        user: data.get('username'),
-        password: data.get('password'),
-        });
-    };
+    }    
 
     return (
         <ThemeProvider theme={theme}>
@@ -45,7 +38,7 @@ function Login()
             <Typography component="h1" variant="h5">
                 Sign In
             </Typography>
-            <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+            <Box component="form" onSubmit={loginUser} noValidate sx={{ mt: 1 }}>
                 <TextField
                 margin="normal"
                 required
@@ -53,7 +46,6 @@ function Login()
                 id="username"
                 label="Username"
                 name="username"
-                autoFocus
                 />
                 <TextField
                 margin="normal"
@@ -75,7 +67,7 @@ function Login()
                 </Button>
                 <Grid container>
                 <Grid item>
-                    <Link onClick={signUp} variant="body2">
+                    <Link onClick={signUp} href="#" variant="body2">
                     {"Don't have an account? Sign Up"}
                     </Link>
                 </Grid>
