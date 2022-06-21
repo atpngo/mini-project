@@ -14,6 +14,7 @@ function Map()
     useEffect(() => {
         setLines([]);
         setLoading(true);
+        document.body.style.overflow = "hidden";
         axios.get('http://localhost:8000/powerlines/')
             .then((res) => {
                 let data = res.data.results.length;
