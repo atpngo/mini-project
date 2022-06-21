@@ -57,12 +57,23 @@ function ThresholdInput()
     }
 
     return (
-        <div>
-            Threshold Value: {thresholdValue}
-            <br/>
-            <Button variant="outlined" onClick={handleClickOpen}>
+        <div style={{
+            position:'relative',
+            borderRadius: "0px 0px 0px 20px",
+            color:'white',
+            backgroundColor:'#3783e6',
+            top:"70%",
+            left: "75vw",
+            width: "25%",
+            zIndex:1000
+        }}>
+            <div style={{
+                fontSize:"large"
+            }}>Threshold Value: {thresholdValue}     
+            <Button variant="contained" onClick={handleClickOpen}>
                 EDIT THRESHOLD 
-            </Button>
+            </Button></div>
+            
             <Dialog open={open} onClose={handleClickClose}>
                 <DialogTitle>Edit Threshold Value</DialogTitle>
                 <DialogContent>

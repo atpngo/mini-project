@@ -88,9 +88,16 @@ function Map()
 
 
     return (
-        <div>
-            <ThresholdInput></ThresholdInput>
+        <div style={{
+            position: 'relative'
+        }}>
 
+            {/* <ThresholdInput/> */}
+            <div style={{
+                position: 'absolute',
+                top:0,
+                left:0
+            }}>
             <MapContainer center={[38.475879, -121.772135]} zoom={11} scrollWheelZoom={true}>
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -102,6 +109,7 @@ function Map()
                 })}
 
             </MapContainer>
+            </div>
             <br/>
         </div>
     ); 

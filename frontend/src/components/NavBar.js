@@ -10,6 +10,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
+import { Grid, Paper, Stack } from "@mui/material";
 
 const pages = ['ADD POWERLINES', 'UPDATE POWERLINES', 'DELETE POWERLINES'];
 
@@ -35,8 +36,11 @@ const NavBar = () => {
         setAnchorElUser(null);
     };
 
-    return (
-        <AppBar position="static">
+    return user ? (
+        <div style={{
+            zIndex:10000
+        }}>
+        <AppBar position="static" style={{backgroundColor:'#3783e6'}}>
         <Container maxWidth="xl">
             <Toolbar disableGutters>
             <Typography
@@ -56,7 +60,6 @@ const NavBar = () => {
             >
                 GIRS CHALLENGE
             </Typography>
-
             <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                 <IconButton
                 size="large"
@@ -68,6 +71,7 @@ const NavBar = () => {
                 >
                 <MenuIcon />
                 </IconButton>
+            
                 <Menu
                 id="menu-appbar"
                 anchorEl={anchorElNav}
@@ -91,6 +95,7 @@ const NavBar = () => {
                     <Typography textAlign="center">{page}</Typography>
                     </MenuItem>
                 ))}
+                <MenuItem><Typography onClick={logoutUser} textAlign="center">LOGOUT</Typography></MenuItem>
                 </Menu>
             </Box>
             <Typography
@@ -111,6 +116,7 @@ const NavBar = () => {
             >
                 GIRS CHALLENGE
             </Typography>
+
             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                 {pages.map((page) => (
                 <Button
@@ -122,14 +128,41 @@ const NavBar = () => {
                 </Button>
                 ))}
             </Box>
-
-            <Box sx={{ flexGrow: 0 }}>
-                {user && <Typography onClick={logoutUser}>LOGOUT</Typography>}
+            
+            <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex' } }}>
+                <Typography onClick={logoutUser}>LOGOUT</Typography>
                 
             </Box>
+
             </Toolbar>
+            
         </Container>
         </AppBar>
+        </div>
+    ) : (
+            <Paper component={Stack} direction="column" justifyContent="center" sx={{backgroundColor:"#3783e6", color:"white", height: "60px"}}>
+            <div style={{display: "block", marginLeft: "auto", marginRight: "auto"}}>
+            <Typography 
+                variant="h6"
+                // noWrap
+                // component="a"
+                // href="/"
+                sx={{
+                mr: 2,
+                // margin: 2,
+                justify: 'center',
+                alignItems: 'center',
+                fontFamily: 'monospace',
+                fontWeight: 700,
+                letterSpacing: '.3rem',
+                color: 'inherit',
+                textDecoration: 'none',
+                }}
+            >
+                GIRS CHALLENGE
+            </Typography>
+            </div>
+            </Paper>
     );
 };
 export default NavBar;
