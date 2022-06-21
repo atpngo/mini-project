@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
@@ -9,24 +9,55 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from "react-router-dom";
-
+import AuthContext from '../context/AuthContext';
+import axios from "axios";
 
 const theme = createTheme();
 
 function Register()
 {
+    let {user} = useContext(AuthContext);
+
     const navigate = useNavigate();
     const login = () =>
     {
         navigate("/");
     }
+
+    useEffect(() => {
+        if (user)
+        {
+            navigate('/map');
+        }
+    }, []);
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        console.log({
-        email: data.get('email'),
-        password: data.get('password'),
-        });
+        let user = data.get('user');
+        let password = data.get('password');
+        let confirmPassword = data.get('password-confirm');
+        if (password !== confirmPassword)
+        {
+            console.log("no match");
+        }
+        else
+        {
+            let data = new FormData();
+            data.append('username', user);
+            data.append('password', password);
+            axios.post("http://localhost:8000/api/register/", data)
+                .then(
+                    res => {
+                        alert("Account succesfully created!");
+                        navigate('/');
+                    }
+                )
+                .catch(
+                    err => {
+                        alert("Username already exists!");
+                    }
+                )
+        }
     };
 
     return (
@@ -72,7 +103,7 @@ function Register()
                     fullWidth
                     name="password-confirm"
                     label="Confirm Password"
-                    type="password-confirm"
+                    type="password"
                     id="password-confirm"
                     />
                 </Grid>

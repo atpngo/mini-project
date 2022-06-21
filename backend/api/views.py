@@ -1,10 +1,12 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from base.models import Item, Threshold, Powerline
-from .serializers import ItemSerializer, ThresholdSerializer, PowerlineSerializer
+from .serializers import ItemSerializer, ThresholdSerializer, PowerlineSerializer, RegisterSerializer
 from rest_framework.pagination import PageNumberPagination
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
+from django.contrib.auth.models import User
+from rest_framework import status
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
@@ -61,6 +63,16 @@ def getPowerlines(request):
 @api_view(['POST'])
 def addPowerline(request):
     serializer = PowerlineSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+def addUser(request):
+    if User.objects.all().filter(username=request.data.get("username")).exists():
+        return Response({"Fail":"Username already exists"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+    serializer = RegisterSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
     return Response(serializer.data)
