@@ -1,6 +1,8 @@
 import './App.css';
-import Test from './components/Test';
-import Map from './components/Map'
+import Map from './components/Map';
+import Login from './components/Login';
+import Register from './components/Register';
+import Error from './components/Error';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 function App() {
@@ -9,8 +11,10 @@ function App() {
     <div className="App">
       <Router>
         <Routes>
-          <Route path="/" element={<Test/>}/>
+          <Route path="/" element={<Login/>}/>
+          <Route path="/register" element={<Register/>}/>
           <Route path="/map" element={<Map/>}/>
+          <Route path="*" element={<Error/>}/>
         </Routes>
       </Router>
     </div>
