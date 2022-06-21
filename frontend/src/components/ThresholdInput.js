@@ -5,6 +5,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
+import Typography from '@mui/material/Typography';
 import DialogTitle from '@mui/material/DialogTitle';
 import axios from "axios";
 
@@ -71,13 +72,15 @@ function ThresholdInput()
         }}>
             <div style={{
                 fontSize:"large"
-            }}>Threshold Value: {thresholdValue}     
+            }}><Typography variant="h6" sx={{fontFamily: 'monospace',
+            fontWeight: 700,}}>Threshold Value: {thresholdValue}</Typography> 
             <Button variant="contained" onClick={handleClickOpen} sx={{
                 borderRadius: "0px 0px 0px 20px",
                 width: "100%",
                 
             }}>
-                EDIT THRESHOLD 
+                <Typography variant="h6" sx={{fontFamily: 'monospace',
+            fontWeight: 300,}}>UPDATE THRESHOLD</Typography>
             </Button>
             </div>
             
