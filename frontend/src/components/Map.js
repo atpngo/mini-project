@@ -92,7 +92,7 @@ function Map()
             position: 'relative'
         }}>
 
-            {/* <ThresholdInput/> */}
+            <ThresholdInput/>
             <div style={{
                 position: 'absolute',
                 top:0,

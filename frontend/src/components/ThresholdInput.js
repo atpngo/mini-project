@@ -61,18 +61,25 @@ function ThresholdInput()
             position:'relative',
             borderRadius: "0px 0px 0px 20px",
             color:'white',
+            outline: 'none',
             backgroundColor:'#3783e6',
-            top:"70%",
+            top:"75%",
             left: "75vw",
             width: "25%",
-            zIndex:1000
+            zIndex:1000,
+            flexGrow: 1, display: { xs: 'flex', md: 'none' }
         }}>
             <div style={{
                 fontSize:"large"
             }}>Threshold Value: {thresholdValue}     
-            <Button variant="contained" onClick={handleClickOpen}>
+            <Button variant="contained" onClick={handleClickOpen} sx={{
+                borderRadius: "0px 0px 0px 20px",
+                width: "100%",
+                
+            }}>
                 EDIT THRESHOLD 
-            </Button></div>
+            </Button>
+            </div>
             
             <Dialog open={open} onClose={handleClickClose}>
                 <DialogTitle>Edit Threshold Value</DialogTitle>
