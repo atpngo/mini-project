@@ -35,7 +35,7 @@ def editThreshold(request):
 def getPowerlines(request):
     paginator = PageNumberPagination()
     # NUMBER OF LINES RETURNED
-    paginator.page_size = 2
+    paginator.page_size = 50
     items = Powerline.objects.all()
     result = paginator.paginate_queryset(items, request)
     serializer = PowerlineSerializer(result, many=True)
