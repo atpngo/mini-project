@@ -65,6 +65,7 @@ const NavBar = () => {
             >
                 GIRS CHALLENGE
             </Typography>
+            
             <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                 <IconButton
                 size="large"
@@ -99,6 +100,7 @@ const NavBar = () => {
                     <MenuItem onClick={handleNavigate}>
                     <Typography textAlign="center">EDIT POWERLINES</Typography>
                     </MenuItem>
+                    
                 <MenuItem><Typography onClick={logoutUser} textAlign="center">LOGOUT</Typography></MenuItem>
                 </Menu>
             </Box>
@@ -131,8 +133,11 @@ const NavBar = () => {
                 </Button>
             </Box>
             
+
+            
+
             <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex' } }}>
-                <Typography onClick={logoutUser}>LOGOUT</Typography>
+                <Typography onClick={logoutUser}>LOGOUT {user.username}</Typography>
                 
             </Box>
 

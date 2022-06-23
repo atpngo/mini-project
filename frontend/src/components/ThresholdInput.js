@@ -53,7 +53,6 @@ function ThresholdInput()
     {
         if (0 <= tmpThreshold && tmpThreshold <= 1)
         {
-            console.log("Valid Threshold Value");
             let data = new FormData();
             data.append("value", tmpThreshold);
             axios.put("http://localhost:8000/edit-threshold/", data)

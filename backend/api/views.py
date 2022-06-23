@@ -38,6 +38,8 @@ def addItem(request):
 @api_view(['GET', 'PUT'])
 def editThreshold(request):
     if request.method == 'GET':
+        if not Threshold.objects.filter(id="1").exists():
+            Threshold.objects.create(value=0.5)
         items = Threshold.objects.filter(id="1")
         serializer = ThresholdSerializer(items, many=True)
     elif request.method == 'PUT':

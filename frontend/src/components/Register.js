@@ -38,7 +38,7 @@ function Register()
         let confirmPassword = data.get('password-confirm');
         if (password !== confirmPassword)
         {
-            console.log("no match");
+            alert("Passwords must match!");
         }
         else
         {

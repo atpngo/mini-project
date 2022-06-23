@@ -11,12 +11,17 @@ services:
   db:
     restart: always
     image: postgres:14.4
+    volumes:
+      - /data/postgresql:/var/lib/postgresql
+      - /data/postgresql/data:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=postgres
+      - PGDATA=/var/lib/postgresql/data/
     ports:
       - "5432:5432"
     networks:
       - db-net
+    
 
   project:
     restart: always

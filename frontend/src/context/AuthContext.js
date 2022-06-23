@@ -53,7 +53,6 @@ export const AuthProvider = ({children}) =>
 
     let updateToken = async () =>
     {
-        console.log("update token call");
         let payload = new FormData();
         payload.append("refresh", authTokens.refresh)
         axios.post('http://localhost:8000/api/token/refresh/', payload)

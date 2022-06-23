@@ -202,12 +202,9 @@ function EditPowerlines()
     
     const deletePowerline = () =>
     {
-        console.log("deleting powerline");
         let name = line.name;
-        console.log(name);
         axios.post("http://localhost:8000/delete-powerline/", {'name':name})
             .then( res => {
-                console.log(res);
                 document.location.reload();
             })
     }
