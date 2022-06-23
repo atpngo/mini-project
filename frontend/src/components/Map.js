@@ -20,64 +20,71 @@ function Map()
             .then((res) => {
                 let data = res.data.results.length;
                 let totalDataCount = res.data.count;
-                let pages= Array(Math.ceil(totalDataCount/data)).join(".").split(".");
-                pages = pages.map((element, index) => {
-                    return 'http://localhost:8000/powerlines/?page=' + parseInt(index+1);
-                });
-                axios.all(
-                    pages.map((page) => axios.get(page))
-                )
-                .then( response => {
-                    // setLines(response);
-                    let responseLength = response.length;
-                    for (let i=0; i<responseLength; i++)
+                let pageCount = Math.ceil(totalDataCount/data);
+                if (pageCount > 0)
                     {
-                        let pageData = response[i].data.results;
-                        for (let j=0; j<pageData.length; j++)
+                    let pages= Array(pageCount).join(".").split(".");
+                    pages = pages.map((element, index) => {
+                        return 'http://localhost:8000/powerlines/?page=' + parseInt(index+1);
+                    });
+                    axios.all(
+                        pages.map((page) => axios.get(page))
+                    )
+                    .then( response => {
+                        // setLines(response);
+                        let responseLength = response.length;
+                        for (let i=0; i<responseLength; i++)
                         {
-                            let lineData = pageData[j];
-                            let lineObject = {};
-                            lineObject['wear'] = lineData.wear;
-                            lineObject['weather'] = lineData.weather;
-                            lineObject['vegetation'] = lineData.vegetation;
-                            lineObject['name'] = lineData.name;
-                            let newCoords = [];
-                            
-                            // flip latlng to lnglat
-                            for (let i=0; i<lineData.geometry.coordinates.length; i++)
+                            let pageData = response[i].data.results;
+                            for (let j=0; j<pageData.length; j++)
                             {
-                                let tmp = [];
-                                // in the rare event that we just have a normal 2D array 
-                                if (typeof(lineData.geometry.coordinates[i][0]) !== "object")
+                                let lineData = pageData[j];
+                                let lineObject = {};
+                                lineObject['wear'] = lineData.wear;
+                                lineObject['weather'] = lineData.weather;
+                                lineObject['vegetation'] = lineData.vegetation;
+                                lineObject['name'] = lineData.name;
+                                let newCoords = [];
+                                
+                                // flip latlng to lnglat
+                                for (let i=0; i<lineData.geometry.coordinates.length; i++)
                                 {
-                                    tmp.push((lineData.geometry.coordinates[i]).reverse());
-                                }
-                                // most arrays we get are 3D
-                                else
-                                {
-                                    for (let j=0; j<lineData.geometry.coordinates[i].length; j++)
+                                    let tmp = [];
+                                    // in the rare event that we just have a normal 2D array 
+                                    if (typeof(lineData.geometry.coordinates[i][0]) !== "object")
                                     {
-                                        tmp.push((lineData.geometry.coordinates[i][j]).reverse());
+                                        tmp.push((lineData.geometry.coordinates[i]).reverse());
                                     }
+                                    // most arrays we get are 3D
+                                    else
+                                    {
+                                        for (let j=0; j<lineData.geometry.coordinates[i].length; j++)
+                                        {
+                                            tmp.push((lineData.geometry.coordinates[i][j]).reverse());
+                                        }
+                                    }
+                                    newCoords.push(tmp);
                                 }
-                                newCoords.push(tmp);
+                                lineObject['coordinates'] = newCoords;
+                                // console.log(lineObject);
+                                setLines(prevState => [...prevState, lineObject]);
                             }
-                            lineObject['coordinates'] = newCoords;
-                            // console.log(lineObject);
-                            setLines(prevState => [...prevState, lineObject]);
                         }
+                        // get threshold info
+                        axios.get("http://localhost:8000/edit-threshold/")
+                            .then(res => 
+                                {
+                                    setThreshold(res.data[0].value)
+                                });
+
+                        setLoading(false);
                     }
-                    // get threshold info
-                    axios.get("http://localhost:8000/edit-threshold/")
-                        .then(res => 
-                            {
-                                setThreshold(res.data[0].value)
-                            });
-
-                    setLoading(false);
-                }
-                )
-
+                    )
+            }
+            else
+            {
+                setLoading(false);
+            }
             });
 
     }, []);

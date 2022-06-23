@@ -2,7 +2,6 @@ import { fontSize, textAlign } from "@mui/system";
 import React from "react";
 import { Polyline, Popup } from 'react-leaflet';
 
-// props contains name and risk of failure value
 function Label(props)
 {
     return (
@@ -21,7 +20,6 @@ function Label(props)
     );
 }
 
-// Props should contain: name, wear, weather, vegetation, geometry[coordinates], threshold
 function Powerline(props)
 {
     let risk = props.wear*props.weather*props.vegetation;

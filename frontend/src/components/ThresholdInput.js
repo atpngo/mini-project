@@ -65,7 +65,6 @@ function ThresholdInput()
         }
         else
         {
-            // make this prettier later
             alert("INVALID INPUT");
         }
     }

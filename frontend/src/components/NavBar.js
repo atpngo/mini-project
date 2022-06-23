@@ -21,27 +21,24 @@ const NavBar = () => {
     let {user, logoutUser} = useContext(AuthContext);
 
     const [anchorElNav, setAnchorElNav] = React.useState(null);
-    const [anchorElUser, setAnchorElUser] = React.useState(null);
 
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
-    };
-    const handleOpenUserMenu = (event) => {
-        setAnchorElUser(event.currentTarget);
     };
 
     const handleCloseNavMenu = () => {
         setAnchorElNav(null);
     };
 
-    const handleCloseUserMenu = () => {
-        setAnchorElUser(null);
-    };
-
     const handleNavigate = () => 
     {
         setAnchorElNav(null);
         navigate('/edit');
+    }
+
+    const goToMap = () =>
+    {
+        navigate('/map');
     }
 
     return user ? (
@@ -120,6 +117,7 @@ const NavBar = () => {
                 color: 'inherit',
                 textDecoration: 'none',
                 }}
+                onClick={goToMap}
             >
                 GIRS CHALLENGE
             </Typography>
@@ -148,9 +146,7 @@ const NavBar = () => {
             <div style={{display: "block", marginLeft: "auto", marginRight: "auto"}}>
             <Typography 
                 variant="h6"
-                // noWrap
-                // component="a"
-                // href="/"
+                onClick={goToMap}
                 sx={{
                 mr: 2,
                 // margin: 2,
