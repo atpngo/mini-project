@@ -64,9 +64,8 @@ def getPowerlines(request):
 
 @api_view(['POST'])
 def addPowerline(request):
-    if Powerline.objects.all().filter(username=request.data.get("username")).exists():
+    if Powerline.objects.all().filter(name=request.data.get("name")).exists():
         return Response({"Fail":"Powerline already exists"}, status=status.HTTP_406_NOT_ACCEPTABLE)
-
     serializer = PowerlineSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
