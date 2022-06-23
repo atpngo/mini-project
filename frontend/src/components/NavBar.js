@@ -11,10 +11,12 @@ import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import { Grid, Paper, Stack } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
-const pages = ['ADD POWERLINES', 'UPDATE POWERLINES', 'DELETE POWERLINES'];
+const pages = ['EDIT POWERLINES'];
 
 const NavBar = () => {
+    let navigate = useNavigate();
 
     let {user, logoutUser} = useContext(AuthContext);
 
@@ -35,6 +37,12 @@ const NavBar = () => {
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
     };
+
+    const handleNavigate = () => 
+    {
+        setAnchorElNav(null);
+        navigate('/edit');
+    }
 
     return user ? (
         <div style={{
@@ -90,11 +98,10 @@ const NavBar = () => {
                     display: { xs: 'block', md: 'none' },
                 }}
                 >
-                {pages.map((page) => (
-                    <MenuItem key={page} onClick={handleCloseNavMenu}>
-                    <Typography textAlign="center">{page}</Typography>
+                
+                    <MenuItem onClick={handleNavigate}>
+                    <Typography textAlign="center">EDIT POWERLINES</Typography>
                     </MenuItem>
-                ))}
                 <MenuItem><Typography onClick={logoutUser} textAlign="center">LOGOUT</Typography></MenuItem>
                 </Menu>
             </Box>
@@ -118,15 +125,12 @@ const NavBar = () => {
             </Typography>
 
             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                {pages.map((page) => (
                 <Button
-                    key={page}
-                    onClick={handleCloseNavMenu}
+                    onClick={handleNavigate}
                     sx={{ my: 2, color: 'white', display: 'block' }}
                 >
-                    {page}
+                    EDIT POWERLINES
                 </Button>
-                ))}
             </Box>
             
             <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex' } }}>
