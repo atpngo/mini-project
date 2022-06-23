@@ -4,7 +4,6 @@ import { Autocomplete, Button, Input, TextField } from "@mui/material";
 import { MapContainer, TileLayer } from "react-leaflet";
 import Powerline from "./Powerline";
 import Loading from "./Loading";
-import { alignProperty } from "@mui/material/styles/cssUtils";
 
 function EditPowerlines()
 {
@@ -40,6 +39,7 @@ function EditPowerlines()
                             lineObject['weather'] = lineData.weather;
                             lineObject['vegetation'] = lineData.vegetation;
                             lineObject['name'] = lineData.name;
+                            lineObject['originalCoordinates'] = lineData.geometry;
                             let newCoords = [];
                             
                             // flip latlng to lnglat
@@ -91,7 +91,6 @@ function EditPowerlines()
             document.getElementById("wear").value = line.wear;
             document.getElementById("weather").value = line.weather;
             document.getElementById("vegetation").value = line.vegetation;
-            document.getElementById("coordinates").value = JSON.stringify(line.coordinates);
             setLine(line);
             setPowerline(<Powerline name={line.name} wear={line.wear} weather={line.weather} vegetation={line.vegetation} coordinates={line.coordinates} threshold={1}/>);
         }
@@ -102,7 +101,7 @@ function EditPowerlines()
             document.getElementById("wear").value = null;
             document.getElementById("weather").value = null;
             document.getElementById("vegetation").value = null;
-            document.getElementById("coordinates").value = null;
+
             setLine(null);
             setPowerline(null);
         }
@@ -120,6 +119,18 @@ function EditPowerlines()
     const buttonStyle = {
         width:'90%',
         backgroundColor:'#3783e6',
+        color:'white'
+    }
+
+    const buttonUpdateStyle = {
+        width:'50%',
+        backgroundColor:'#3783e6',
+        color:'white'
+    }
+
+    const buttonDeleteStyle = {
+        width:'50%',
+        backgroundColor:'#db4a40',
         color:'white'
     }
 
@@ -142,14 +153,25 @@ function EditPowerlines()
 
     const updatePowerline = () =>
     {
+        let name = document.getElementById("name").value;
         let wear = parseFloat(document.getElementById("wear").value);
         let weather = parseFloat(document.getElementById("weather").value);
         let vegetation = parseFloat(document.getElementById("vegetation").value);
         let isValid = parseInput(wear, weather, vegetation);
-        if (isValid)
+        
+        if (isValid && name.length > 0)
         {
             // then send update req
-            
+            let data = new FormData();
+            data.append("name", line.name);
+            data.append("wear", wear);
+            data.append("vegetation", vegetation);
+            data.append("weather", weather);
+            data.append("newName", name);
+            // data.append("geometry", JSON.stringify(line.originalCoordinates));
+            // console.log(myForm);
+            axios.put("http://localhost:8000/update-powerline/", data)
+                .then(window.location.reload());
         }
     }
 
@@ -180,6 +202,18 @@ function EditPowerlines()
             </div>
         );
     }
+    
+    const deletePowerline = () =>
+    {
+        console.log("deleting powerline");
+        let name = line.name;
+        console.log(name);
+        axios.post("http://localhost:8000/delete-powerline/", {'name':name})
+            .then( res => {
+                console.log(res);
+                document.location.reload();
+            })
+    }
 
     return (
         <div>
@@ -198,7 +232,7 @@ function EditPowerlines()
                 />
                 </div>
                 <div>
-                {(value == null || value == 'Add a new Powerline') ? <Button style={buttonStyle} >ADD POWERLINE</Button> : <Button onClick={updatePowerline} style={buttonStyle}>UPDATE POWERLINE</Button>}
+                {(value == null || value == 'Add a new Powerline') ? <Button style={buttonStyle} >ADD POWERLINE</Button> : <div style={{width:"90%", marginLeft:"auto", marginRight:"auto"}}><Button onClick={updatePowerline} style={buttonUpdateStyle}>UPDATE POWERLINE</Button><Button onClick={deletePowerline} style={buttonDeleteStyle} >DELETE POWERLINE</Button></div>}
                 </div>
             </div>
             <br></br>
@@ -218,7 +252,7 @@ function EditPowerlines()
                     <TextField style={textFieldStyle} id="vegetation" label="Vegetation" InputLabelProps={{shrink: true}}/>
                     <br/>
                     <br/>
-                    <TextField style={textFieldStyle} id="coordinates" multiline rows={10} label="Coordinates" InputLabelProps={{shrink: true}}/>
+                    {(value == null || value == 'Add a new Powerline') && <TextField style={textFieldStyle} id="coordinates" multiline rows={10} label="Geometry" InputLabelProps={{shrink: true}}/>}
                 </div>
                 {/* put map here */}
                 <Map/>

@@ -1,3 +1,4 @@
+from httpx import RequestError
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from base.models import Item, Threshold, Powerline
@@ -7,6 +8,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth.models import User
 from rest_framework import status
+from django.http import QueryDict
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
@@ -62,11 +64,36 @@ def getPowerlines(request):
 
 @api_view(['POST'])
 def addPowerline(request):
+    if Powerline.objects.all().filter(username=request.data.get("username")).exists():
+        return Response({"Fail":"Powerline already exists"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+
     serializer = PowerlineSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
     return Response(serializer.data)
 
+
+@api_view(['POST'])
+def deletePowerline(request):
+    if Powerline.objects.all().filter(name=request.data.get("name")).exists():
+        Powerline.objects.all().filter(name=request.data.get("name")).delete()
+        return Response({"Success":"Powerline successfully deleted"}, status=status.HTTP_200_OK)
+    else:
+        return Response({"Fail":"Powerline does not exist with that name"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+
+@api_view(['PUT'])
+def updatePowerline(request):
+    # print(request.data)
+    items = Powerline.objects.get(name=request.data.get("name"))
+    tmp = request.data.dict()
+    tmp['name'] = tmp['newName']
+    newRequest = QueryDict('', mutable=True)
+    newRequest.update(tmp)
+    serializer = PowerlineSerializer(items, data=newRequest)
+    if serializer.is_valid():
+        serializer.save()
+    return Response(serializer.data)
+        
 
 @api_view(['POST'])
 def addUser(request):

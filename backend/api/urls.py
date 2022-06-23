@@ -11,6 +11,8 @@ urlpatterns = [
     path('edit-threshold/', views.editThreshold),
     path('powerlines/', views.getPowerlines),
     path('add-powerline/', views.addPowerline),
+    path('delete-powerline/', views.deletePowerline),
+    path('update-powerline/', views.updatePowerline),
 
     path('api/token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
