@@ -135,8 +135,12 @@ function EditPowerlines()
     }
 
 
-    const parseInput = (wear, weather, vegetation) =>
+    const parseInput = (wear, weather, vegetation, name) =>
     {
+        if (name.length < 1)
+        {
+            return false;
+        }
         if (typeof(wear) == 'NaN' && typeof(weather) == 'NaN' && typeof(vegetation) == 'NaN')
         {
             return false;
@@ -157,9 +161,9 @@ function EditPowerlines()
         let wear = parseFloat(document.getElementById("wear").value);
         let weather = parseFloat(document.getElementById("weather").value);
         let vegetation = parseFloat(document.getElementById("vegetation").value);
-        let isValid = parseInput(wear, weather, vegetation);
+        let isValid = parseInput(wear, weather, vegetation, name);
         
-        if (isValid && name.length > 0)
+        if (isValid)
         {
             // then send update req
             let data = new FormData();
@@ -215,6 +219,27 @@ function EditPowerlines()
             })
     }
 
+    const addPowerline = () =>
+    {
+        let name = document.getElementById("name").value;
+        let wear = parseFloat(document.getElementById("wear").value);
+        let weather = parseFloat(document.getElementById("weather").value);
+        let vegetation = parseFloat(document.getElementById("vegetation").value);
+        let geometry = document.getElementById("geometry").value;
+        let isValid = parseInput(wear, weather, vegetation, name);
+        if (isValid)
+        {
+            let data = new FormData();
+            data.append("name", name);
+            data.append('wear', wear);
+            data.append("weather", weather);
+            data.append("vegetation", vegetation);
+            data.append("geometry", geometry.replaceAll("'", '"'));
+            axios.post("http://localhost:8000/add-powerline/", data)
+                .then(res => console.log(res));
+        }
+    }
+
     return (
         <div>
 
@@ -232,7 +257,7 @@ function EditPowerlines()
                 />
                 </div>
                 <div>
-                {(value == null || value == 'Add a new Powerline') ? <Button style={buttonStyle} >ADD POWERLINE</Button> : <div style={{width:"90%", marginLeft:"auto", marginRight:"auto"}}><Button onClick={updatePowerline} style={buttonUpdateStyle}>UPDATE POWERLINE</Button><Button onClick={deletePowerline} style={buttonDeleteStyle} >DELETE POWERLINE</Button></div>}
+                {(value == null || value == 'Add a new Powerline') ? <Button onClick={addPowerline} style={buttonStyle} >ADD POWERLINE</Button> : <div style={{width:"90%", marginLeft:"auto", marginRight:"auto"}}><Button onClick={updatePowerline} style={buttonUpdateStyle}>UPDATE POWERLINE</Button><Button onClick={deletePowerline} style={buttonDeleteStyle} >DELETE POWERLINE</Button></div>}
                 </div>
             </div>
             <br></br>
@@ -252,7 +277,7 @@ function EditPowerlines()
                     <TextField style={textFieldStyle} id="vegetation" label="Vegetation" InputLabelProps={{shrink: true}}/>
                     <br/>
                     <br/>
-                    {(value == null || value == 'Add a new Powerline') && <TextField style={textFieldStyle} id="coordinates" multiline rows={10} label="Geometry" InputLabelProps={{shrink: true}}/>}
+                    {(value == null || value == 'Add a new Powerline') && <TextField style={textFieldStyle} id="geometry" multiline rows={10} label="Geometry" InputLabelProps={{shrink: true}}/>}
                 </div>
                 {/* put map here */}
                 <Map/>
