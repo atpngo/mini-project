@@ -184,7 +184,7 @@ function EditPowerlines()
             <div>
                 <MapContainer 
                     style={{
-                        width: '75vw', height: '100%'
+                        width: '74vw', height: '75%'
                     }}
                     center={line ? line.coordinates[0][0] : [38.475879, -121.772135]}
                     zoom={13}
