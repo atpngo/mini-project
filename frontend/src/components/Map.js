@@ -4,6 +4,7 @@ import { MapContainer, TileLayer, Marker, Popup, Polyline, Rectangle } from 'rea
 import '../styles/Map.css';
 import Powerline from "./Powerline";
 import ThresholdInput from "./ThresholdInput";
+import Loading from "./Loading";
 
 function Map()
 {   
@@ -84,7 +85,7 @@ function Map()
 
     if (loading)
     {
-        return <p>Loading...</p>
+        return <Loading/>
     }
 
 

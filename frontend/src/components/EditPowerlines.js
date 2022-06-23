@@ -3,6 +3,8 @@ import axios from "axios";
 import { Autocomplete, Button, Input, TextField } from "@mui/material";
 import { MapContainer, TileLayer } from "react-leaflet";
 import Powerline from "./Powerline";
+import Loading from "./Loading";
+import { alignProperty } from "@mui/material/styles/cssUtils";
 
 function EditPowerlines()
 {
@@ -80,7 +82,6 @@ function EditPowerlines()
     const handleSearchChange = (e, newVal) =>
     {
         setValue(newVal);
-        console.log(newVal);
         let search = lines.filter(line => { return line.name === newVal; });
         // set up updating
         if (search.length > 0)
@@ -92,7 +93,6 @@ function EditPowerlines()
             document.getElementById("vegetation").value = line.vegetation;
             document.getElementById("coordinates").value = JSON.stringify(line.coordinates);
             setLine(line);
-            console.log(line.coordinates[0][0])
             setPowerline(<Powerline name={line.name} wear={line.wear} weather={line.weather} vegetation={line.vegetation} coordinates={line.coordinates} threshold={1}/>);
         }
         // otherwise leave input
@@ -103,12 +103,14 @@ function EditPowerlines()
             document.getElementById("weather").value = null;
             document.getElementById("vegetation").value = null;
             document.getElementById("coordinates").value = null;
+            setLine(null);
+            setPowerline(null);
         }
 
     }
     if (loading)
     {
-        return <p>Loading...</p>
+        return <Loading/>
     }
 
     const textFieldStyle = {
@@ -119,6 +121,36 @@ function EditPowerlines()
         width:'90%',
         backgroundColor:'#3783e6',
         color:'white'
+    }
+
+
+    const parseInput = (wear, weather, vegetation) =>
+    {
+        if (typeof(wear) == 'NaN' && typeof(weather) == 'NaN' && typeof(vegetation) == 'NaN')
+        {
+            return false;
+        }
+        if ((0 <= wear && wear <= 1) && (0 <= weather && weather <= 1) && (0 <= vegetation && vegetation <= 1))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    const updatePowerline = () =>
+    {
+        let wear = parseFloat(document.getElementById("wear").value);
+        let weather = parseFloat(document.getElementById("weather").value);
+        let vegetation = parseFloat(document.getElementById("vegetation").value);
+        let isValid = parseInput(wear, weather, vegetation);
+        if (isValid)
+        {
+            // then send update req
+            
+        }
     }
 
     const Map = ({center, zoom}) => 
@@ -166,13 +198,13 @@ function EditPowerlines()
                 />
                 </div>
                 <div>
-                {(value == null || value == 'Add a new Powerline') ? <Button style={buttonStyle}>ADD POWERLINE</Button> : <Button style={buttonStyle}>UPDATE POWERLINE</Button>}
+                {(value == null || value == 'Add a new Powerline') ? <Button style={buttonStyle} >ADD POWERLINE</Button> : <Button onClick={updatePowerline} style={buttonStyle}>UPDATE POWERLINE</Button>}
                 </div>
             </div>
             <br></br>
-            <div style={{display:'flex'}}>
+            <div style={{display:'flex', height:'100vh'}}>
                 <div style={{
-                    width:'25vw'
+                    width:'25vw', height: 'auto'
                 }}>
                     <TextField style={textFieldStyle} id="name" label="Name" InputLabelProps={{shrink: true}}/>
                     <br/>
@@ -191,7 +223,6 @@ function EditPowerlines()
                 {/* put map here */}
                 <Map/>
             </div>
-            <br/>
             
         </div>
     );
