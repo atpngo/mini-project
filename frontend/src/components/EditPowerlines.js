@@ -10,6 +10,7 @@ function EditPowerlines()
     const [loading, setLoading] = useState(true);
     const [value, setValue] = useState(null);
     const [powerline, setPowerline] = useState(null);
+    const [line, setLine] = useState(null);
 
     useEffect(() => {
         setLines([]);
@@ -90,6 +91,8 @@ function EditPowerlines()
             document.getElementById("weather").value = line.weather;
             document.getElementById("vegetation").value = line.vegetation;
             document.getElementById("coordinates").value = JSON.stringify(line.coordinates);
+            setLine(line);
+            console.log(line.coordinates[0][0])
             setPowerline(<Powerline name={line.name} wear={line.wear} weather={line.weather} vegetation={line.vegetation} coordinates={line.coordinates} threshold={1}/>);
         }
         // otherwise leave input
@@ -116,6 +119,34 @@ function EditPowerlines()
         width:'90%',
         backgroundColor:'#3783e6',
         color:'white'
+    }
+
+    const Map = ({center, zoom}) => 
+    {
+        const [map, setMap] = useState(null);
+        if (map)
+        {
+            map.flyTo(center);
+        }
+        return (
+            <div>
+                {/* put map here */}
+                <MapContainer 
+                    style={{
+                        width: '75vw', height: '100%'
+                    }}
+                    center={line ? line.coordinates[0][0] : [38.475879, -121.772135]}
+                    zoom={13}
+                    scrollWheelZoom={true}
+                    >
+                    <TileLayer
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    />
+                    {powerline}
+                </MapContainer>
+            </div>
+        );
     }
 
     return (
@@ -157,23 +188,8 @@ function EditPowerlines()
                     <br/>
                     <TextField style={textFieldStyle} id="coordinates" multiline rows={10} label="Coordinates" InputLabelProps={{shrink: true}}/>
                 </div>
-                <div>
-                    {/* put map here */}
-                    <MapContainer 
-                        style={{
-                            width: '75vw', height: '100%'
-                        }}
-                        center={[38.475879, -121.772135]}
-                        zoom={11}
-                        scrollWheelZoom={true}
-                        >
-                        <TileLayer
-                            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                        />
-                        {powerline}
-                    </MapContainer>
-                </div>
+                {/* put map here */}
+                <Map/>
             </div>
             <br/>
             
