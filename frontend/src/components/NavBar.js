@@ -10,10 +10,9 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
-import { Grid, Paper, Stack } from "@mui/material";
+import { Paper, Stack } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-const pages = ['EDIT POWERLINES'];
 
 const NavBar = () => {
     let navigate = useNavigate();

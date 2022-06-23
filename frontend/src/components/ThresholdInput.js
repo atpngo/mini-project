@@ -8,14 +8,10 @@ import DialogContentText from '@mui/material/DialogContentText';
 import Typography from '@mui/material/Typography';
 import DialogTitle from '@mui/material/DialogTitle';
 import axios from "axios";
-import { createTheme, responsiveFontSizes } from '@mui/material/styles';
-import { ThemeProvider } from "@emotion/react";
 
 
 function ThresholdInput()
 {
-    let theme = createTheme();
-    theme = responsiveFontSizes(theme);
 
     const [open, setOpen] = useState(false);
     const [width, setWidth] = useState(window.innerWidth);

@@ -2,7 +2,6 @@ import axios from "axios";
 import React, { createContext, useState, useEffect } from "react";
 import jwt_decode from "jwt-decode";
 import { useNavigate } from 'react-router-dom';
-import { optionGroupUnstyledClasses } from "@mui/base";
 
 const AuthContext = createContext();
 
@@ -28,7 +27,7 @@ export const AuthProvider = ({children}) =>
         axios.post('http://localhost:8000/api/token/', payload)
             .then(res => 
                 {
-                    if (res.status == 200)
+                    if (res.status === 200)
                     {
                         setAuthTokens(res.data);
                         setUser(jwt_decode(res.data.access));

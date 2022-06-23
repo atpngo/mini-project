@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
-import { Autocomplete, Button, Input, TextField } from "@mui/material";
+import { Autocomplete, Button, TextField } from "@mui/material";
 import { MapContainer, TileLayer } from "react-leaflet";
 import Powerline from "./Powerline";
 import Loading from "./Loading";
@@ -142,7 +142,7 @@ function EditPowerlines()
         {
             return false;
         }
-        if (typeof(wear) == 'NaN' && typeof(weather) == 'NaN' && typeof(vegetation) == 'NaN')
+        if (wear === 'NaN' || weather === 'NaN' || vegetation === 'NaN')
         {
             return false;
         }
@@ -252,7 +252,7 @@ function EditPowerlines()
                 />
                 </div>
                 <div>
-                {(value == null || value == 'Add a new Powerline') ? <Button onClick={addPowerline} style={buttonStyle} >ADD POWERLINE</Button> : <div style={{width:"90%", marginLeft:"auto", marginRight:"auto"}}><Button onClick={updatePowerline} style={buttonUpdateStyle}>UPDATE POWERLINE</Button><Button onClick={deletePowerline} style={buttonDeleteStyle} >DELETE POWERLINE</Button></div>}
+                {(value === null || value === 'Add a new Powerline') ? <Button onClick={addPowerline} style={buttonStyle} >ADD POWERLINE</Button> : <div style={{width:"90%", marginLeft:"auto", marginRight:"auto"}}><Button onClick={updatePowerline} style={buttonUpdateStyle}>UPDATE POWERLINE</Button><Button onClick={deletePowerline} style={buttonDeleteStyle} >DELETE POWERLINE</Button></div>}
                 </div>
             </div>
             <br></br>
@@ -272,7 +272,7 @@ function EditPowerlines()
                     <TextField style={textFieldStyle} id="vegetation" label="Vegetation" InputLabelProps={{shrink: true}}/>
                     <br/>
                     <br/>
-                    {(value == null || value == 'Add a new Powerline') && <TextField style={textFieldStyle} id="geometry" multiline rows={10} label="Geometry" InputLabelProps={{shrink: true}}/>}
+                    {(value === null || value === 'Add a new Powerline') && <TextField style={textFieldStyle} id="geometry" multiline rows={10} label="Geometry" InputLabelProps={{shrink: true}}/>}
                 </div>
                 <Map/>
             </div>
