@@ -37,7 +37,7 @@ export const AuthProvider = ({children}) =>
                 })
             .catch(err =>
                 {
-                    alert("Something went wrong!");
+                    alert("Invalid credentials!");
                 })
         
     }
