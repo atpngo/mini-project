@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { createContext, useState, useEffect } from "react";
 import jwt_decode from "jwt-decode";
 import { useNavigate } from 'react-router-dom';
+import Backend from "../utils/Backend";
 
 const AuthContext = createContext();
 
@@ -24,7 +25,7 @@ export const AuthProvider = ({children}) =>
         let payload = new FormData();
         payload.append('username', data.get('username'));
         payload.append('password', data.get('password'));
-        axios.post('http://localhost:8000/api/token/', payload)
+        axios.post(Backend.getTokenURL, payload)
             .then(res => 
                 {
                     if (res.status === 200)
@@ -54,7 +55,7 @@ export const AuthProvider = ({children}) =>
     {
         let payload = new FormData();
         payload.append("refresh", authTokens.refresh)
-        axios.post('http://localhost:8000/api/token/refresh/', payload)
+        axios.post(Backend.refreshTokenURL, payload)
             .then(res => 
                 {
                     if (res.status === 200)

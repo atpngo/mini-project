@@ -11,6 +11,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from "react-router-dom";
 import AuthContext from '../context/AuthContext';
 import axios from "axios";
+import Backend from "../utils/Backend";
 
 const theme = createTheme();
 
@@ -45,7 +46,7 @@ function Register()
             let data = new FormData();
             data.append('username', user);
             data.append('password', password);
-            axios.post("http://localhost:8000/api/register/", data)
+            axios.post(Backend.registerURL, data)
                 .then(
                     res => {
                         alert("Account succesfully created!");

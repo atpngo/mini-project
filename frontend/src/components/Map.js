@@ -5,6 +5,7 @@ import '../styles/Map.css';
 import Powerline from "./Powerline";
 import ThresholdInput from "./ThresholdInput";
 import Loading from "./Loading";
+import Backend from "../utils/Backend";
 
 function Map()
 {   
@@ -16,7 +17,7 @@ function Map()
         setLines([]);
         setLoading(true);
         document.body.style.overflow = "hidden";
-        axios.get('http://localhost:8000/powerlines/')
+        axios.get(Backend.getLineURL)
             .then((res) => {
                 let data = res.data.results.length;
                 let totalDataCount = res.data.count;
@@ -25,7 +26,7 @@ function Map()
                     {
                     let pages= Array(pageCount).join(".").split(".");
                     pages = pages.map((element, index) => {
-                        return 'http://localhost:8000/powerlines/?page=' + parseInt(index+1);
+                        return Backend.getLineByPageURL + parseInt(index+1);
                     });
                     axios.all(
                         pages.map((page) => axios.get(page))
@@ -71,7 +72,7 @@ function Map()
                             }
                         }
                         // get threshold info
-                        axios.get("http://localhost:8000/edit-threshold/")
+                        axios.get(Backend.thresholdURL)
                             .then(res => 
                                 {
                                     setThreshold(res.data[0].value)

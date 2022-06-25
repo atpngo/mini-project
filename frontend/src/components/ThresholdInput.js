@@ -8,7 +8,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import Typography from '@mui/material/Typography';
 import DialogTitle from '@mui/material/DialogTitle';
 import axios from "axios";
-
+import Backend from "../utils/Backend";
 
 function ThresholdInput()
 {
@@ -36,7 +36,7 @@ function ThresholdInput()
     useEffect(() => {  
         setWidth(window.innerWidth);
         window.addEventListener("resize", handleWindowResize);
-        axios.get("http://localhost:8000/edit-threshold/")
+        axios.get(Backend.thresholdURL)
             .then(res =>
                 {
                     let currentThreshold = res.data[0].value;
@@ -51,7 +51,7 @@ function ThresholdInput()
         {
             let data = new FormData();
             data.append("value", tmpThreshold);
-            axios.put("http://localhost:8000/edit-threshold/", data)
+            axios.put(Backend.thresholdURL, data)
                 .then(setThresholdValue(tmpThreshold));
             
             // reload page

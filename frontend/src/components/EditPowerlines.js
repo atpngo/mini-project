@@ -4,6 +4,7 @@ import { Autocomplete, Button, TextField } from "@mui/material";
 import { MapContainer, TileLayer } from "react-leaflet";
 import Powerline from "./Powerline";
 import Loading from "./Loading";
+import Backend from "../utils/Backend";
 
 function EditPowerlines()
 {
@@ -15,7 +16,7 @@ function EditPowerlines()
 
     useEffect(() => {
         setLines([]);
-        axios.get('http://localhost:8000/powerlines/')
+        axios.get(Backend.getLineURL)
             .then((res) => {
                 let data = res.data.results.length;
                 let totalDataCount = res.data.count;
@@ -24,7 +25,7 @@ function EditPowerlines()
                 {
                     let pages= Array(Math.ceil(totalDataCount/data)).join(".").split(".");
                     pages = pages.map((element, index) => {
-                        return 'http://localhost:8000/powerlines/?page=' + parseInt(index+1);
+                        return Backend.getLineByPageURL + parseInt(index+1);
                     });
                     axios.all(
                         pages.map((page) => axios.get(page))
@@ -173,7 +174,7 @@ function EditPowerlines()
             data.append("vegetation", vegetation);
             data.append("weather", weather);
             data.append("newName", name);
-            axios.put("http://localhost:8000/update-powerline/", data)
+            axios.put(Backend.updateLineURL, data)
                 .then(window.location.reload());
         }
     }
@@ -203,7 +204,7 @@ function EditPowerlines()
     const deletePowerline = () =>
     {
         let name = line.name;
-        axios.post("http://localhost:8000/delete-powerline/", {'name':name})
+        axios.post(Backend.deleteLineURL, {'name':name})
             .then( res => {
                 document.location.reload();
             })
@@ -225,7 +226,7 @@ function EditPowerlines()
             data.append("weather", weather);
             data.append("vegetation", vegetation);
             data.append("geometry", geometry.replaceAll("'", '"'));
-            axios.post("http://localhost:8000/add-powerline/", data)
+            axios.post(Backend.createLineURL, data)
                 .then(res => console.log(res));
         }
     }
